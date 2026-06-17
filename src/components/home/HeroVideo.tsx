@@ -121,7 +121,7 @@ export default function HeroVideo() {
             ref={(el) => {
               textRefs.current[0] = el;
             }}
-            className="text-[40px] md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.1] "
+            className="text-[45px] md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.1] "
           >
             SRI LANKA’S MOST
           </h1>
@@ -133,7 +133,7 @@ export default function HeroVideo() {
             ref={(el) => {
               textRefs.current[1] = el;
             }}
-            className="text-[40px] md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.1] "
+            className="text-[45px] md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.1] "
           >
             PROMISING REAL ESTATE
           </h1>
@@ -145,7 +145,7 @@ export default function HeroVideo() {
             ref={(el) => {
               textRefs.current[2] = el;
             }}
-            className="text-[40px] md:text-6xl lg:text-7xl font-bold text-brand tracking-tight leading-[1.1] "
+            className="text-[45px] md:text-6xl lg:text-7xl font-bold text-brand tracking-tight leading-[1.1] "
           >
             INVESTMENTS.
           </h1>
