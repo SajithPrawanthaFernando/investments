@@ -85,7 +85,7 @@ function PropertiesContent() {
   );
 
   return (
-    <div className="w-full bg-background min-h-screen pt-32 pb-24">
+    <div className="w-full bg-background min-h-screen md:pt-32 pt-16 pb-24">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         {/* Page Header */}
         <div ref={headerRef} className="mb-16">

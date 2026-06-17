@@ -39,7 +39,7 @@ export default function ContactPage() {
   return (
     <div
       ref={containerRef}
-      className="w-full bg-background min-h-screen pt-32 pb-24"
+      className="w-full bg-background min-h-screen md:pt-32 pt-16 pb-24"
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
