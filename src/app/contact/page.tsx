@@ -1,19 +1,74 @@
 "use client";
 
-import { useRef } from "react";
-import { MapPin, Phone, Mail, ArrowRight } from "lucide-react";
+import { useRef, useState } from "react";
+import { MapPin, Phone, Mail, ArrowRight, Building, Home } from "lucide-react";
 import { gsap, useGSAP } from "@/lib/gsap";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 export default function ContactPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const leftColumnRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
+  // 1. State Management for User Segmentation and Form Data
+  const [userType, setUserType] = useState<"invest" | "list">("invest");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    category: "",
+    message: "",
+  });
+
+  // Handle Input Changes
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  // 2. WhatsApp Submission Logic
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Format the message with bold formatting for WhatsApp
+    const whatsappMessage = `*New Inquiry via Investments.lk*
+
+*Type:* ${userType === "invest" ? "Looking to Invest" : "Listing a Property"}
+*Name:* ${formData.name}
+*Email:* ${formData.email}
+*Phone:* ${formData.phone}
+*Property Category:* ${formData.category}
+
+*Additional Details:*
+${formData.message || "No additional details provided."}`;
+
+    // Encode the text for URL usage
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+
+    // Your business WhatsApp number (Include country code, no + or spaces)
+    const whatsappNumber = "94769363695";
+
+    // Redirect to WhatsApp
+    window.open(
+      `https://wa.me/${whatsappNumber}?text=${encodedMessage}`,
+      "_blank",
+    );
+  };
+
+  // GSAP Animations
   useGSAP(
     () => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      // 1. Animate the left column (Headings and Contact Details)
       tl.from(leftColumnRef.current?.children || [], {
         y: 40,
         opacity: 0,
@@ -21,7 +76,6 @@ export default function ContactPage() {
         stagger: 0.15,
       });
 
-      // 2. Animate the right column (Form Inputs)
       tl.from(
         formRef.current?.children || [],
         {
@@ -30,7 +84,7 @@ export default function ContactPage() {
           duration: 0.6,
           stagger: 0.1,
         },
-        "-=0.4", // Start slightly before the left column finishes
+        "-=0.4",
       );
     },
     { scope: containerRef },
@@ -114,10 +168,37 @@ export default function ContactPage() {
 
           {/* Right Column: The Inquiry Form */}
           <div className="bg-surface p-8 md:p-12 lg:p-16">
+            {/* User Type Toggle */}
+            <div className="flex gap-4 mb-10 border-b border-white/10 pb-6">
+              <button
+                onClick={() => setUserType("invest")}
+                className={cn(
+                  "flex-1 py-3 text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300",
+                  userType === "invest"
+                    ? "bg-brand text-white"
+                    : "bg-background text-muted hover:text-foreground",
+                )}
+              >
+                <Building size={18} className="hidden sm:block" /> I want to
+                Invest
+              </button>
+              <button
+                onClick={() => setUserType("list")}
+                className={cn(
+                  "flex-1 py-3 text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300",
+                  userType === "list"
+                    ? "bg-brand text-white"
+                    : "bg-background text-muted hover:text-foreground",
+                )}
+              >
+                <Home size={18} className="hidden sm:block" /> List Property
+              </button>
+            </div>
+
             <form
               ref={formRef}
               className="flex flex-col gap-6"
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={handleSubmit}
             >
               {/* Name */}
               <div className="flex flex-col gap-2">
@@ -130,6 +211,8 @@ export default function ContactPage() {
                 <input
                   type="text"
                   id="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   placeholder="John Doe"
                   className="w-full bg-background border border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 placeholder:text-muted/50"
                   required
@@ -148,6 +231,8 @@ export default function ContactPage() {
                   <input
                     type="email"
                     id="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     placeholder="john@example.com"
                     className="w-full bg-background border border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 placeholder:text-muted/50"
                     required
@@ -163,36 +248,43 @@ export default function ContactPage() {
                   <input
                     type="tel"
                     id="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
                     placeholder="+94 77 123 4567"
                     className="w-full bg-background border border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 placeholder:text-muted/50"
+                    required
                   />
                 </div>
               </div>
 
-              {/* Asset Class Interest */}
+              {/* Asset Class Interest / Listing Category */}
               <div className="flex flex-col gap-2">
                 <label
-                  htmlFor="interest"
+                  htmlFor="category"
                   className="text-sm font-bold uppercase tracking-wider text-foreground"
                 >
-                  Primary Interest
+                  {userType === "invest" ? "Primary Interest" : "Property Type"}
                 </label>
                 <div className="relative">
                   <select
-                    id="interest"
+                    id="category"
+                    value={formData.category}
+                    onChange={handleChange}
                     className="w-full bg-background border border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 appearance-none rounded-none"
                     required
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       Select an asset class...
                     </option>
-                    <option value="lands">Exclusive Lands</option>
-                    <option value="apartments">Luxury Apartments</option>
-                    <option value="houses">Residential Houses</option>
-                    <option value="commercial">Commercial Buildings</option>
-                    <option value="list">I want to list a property</option>
+                    <option value="Exclusive Lands">Exclusive Lands</option>
+                    <option value="Luxury Apartments">Luxury Apartments</option>
+                    <option value="Residential Houses">
+                      Residential Houses
+                    </option>
+                    <option value="Commercial Buildings">
+                      Commercial Buildings
+                    </option>
                   </select>
-                  {/* Custom Arrow for Select to maintain boxy design */}
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-5 text-muted">
                     <svg
                       className="fill-current h-4 w-4"
@@ -215,8 +307,14 @@ export default function ContactPage() {
                 </label>
                 <textarea
                   id="message"
+                  value={formData.message}
+                  onChange={handleChange}
                   rows={4}
-                  placeholder="Tell us about your investment criteria or property specifications..."
+                  placeholder={
+                    userType === "invest"
+                      ? "Tell us about your investment criteria or timeline..."
+                      : "Provide a brief description of the property you want to list..."
+                  }
                   className="w-full bg-background border border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 placeholder:text-muted/50 resize-none"
                 ></textarea>
               </div>
@@ -224,7 +322,7 @@ export default function ContactPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="group mt-4 w-full hover:bg-white hover:text-navy bg-brand text-white py-5 font-bold tracking-widest uppercase flex items-center justify-center gap-3  transition-colors duration-300"
+                className="group mt-4 w-full hover:bg-white hover:text-navy bg-brand text-white py-5 font-bold tracking-widest uppercase flex items-center justify-center gap-3 transition-colors duration-300"
               >
                 Submit Inquiry
                 <ArrowRight

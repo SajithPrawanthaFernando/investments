@@ -129,9 +129,12 @@ export default function ExpertisePage() {
   );
 
   return (
-    <div ref={containerRef} className="w-full bg-background min-h-screen">
+    <div
+      ref={containerRef}
+      className="w-full bg-background min-h-screen md:pb-24"
+    >
       {/* 1. Hero Section (Stats removed from here) */}
-      <section className="md:pt-32 pt-16 'pb-20 border-b border-surface">
+      <section className="md:pt-32 pt-16 pb-20 border-b border-surface">
         <div className="max-w-[1440px] mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-6">
             <div>
@@ -142,7 +145,7 @@ export default function ExpertisePage() {
             </div>
           </div>
           <div className="flex items-end">
-            <p className="text-lg text-muted max-w-2xl md:mb-8">
+            <p className="text-lg text-muted max-w-2xl md:mb-8 mb-4">
               We bridge the gap between high-net-worth capital and Sri Lanka's
               most lucrative real estate assets. Through rigorous data analysis
               and exclusive network access, we secure properties that guarantee
@@ -153,14 +156,11 @@ export default function ExpertisePage() {
       </section>
 
       {/* 2. Impact Stats Section (Matched to Reference Image) */}
-      <section className="w-full bg-navy py-24">
+      <section className="w-full bg-navy md:py-24 py-20">
         <div className="max-w-[1440px] mx-auto px-6 md:px-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8">
             {statsData.map((stat, i) => (
               <div key={i} className="flex flex-col">
-                {/* Using text-white/10 creates that dark, debossed watermark effect 
-                  shown in your reference image against the navy background.
-                */}
                 <div className="text-5xl md:text-7xl lg:text-8xl font-black text-white/50 mb-4 tracking-tighter flex items-baseline">
                   {stat.prefix && (
                     <span className="text-4xl md:text-5xl mr-1">
