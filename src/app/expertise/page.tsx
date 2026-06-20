@@ -131,7 +131,7 @@ export default function ExpertisePage() {
   return (
     <div ref={containerRef} className="w-full bg-background min-h-screen">
       {/* 1. Hero Section (Stats removed from here) */}
-      <section className="md:pt-32 pt-16 md:pb-20 pb-24 border-b border-surface">
+      <section className="md:pt-32 pt-16 'pb-20 border-b border-surface">
         <div className="max-w-[1440px] mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-6">
             <div>
@@ -142,7 +142,7 @@ export default function ExpertisePage() {
             </div>
           </div>
           <div className="flex items-end">
-            <p className="text-lg text-muted max-w-2xl mb-8">
+            <p className="text-lg text-muted max-w-2xl md:mb-8">
               We bridge the gap between high-net-worth capital and Sri Lanka's
               most lucrative real estate assets. Through rigorous data analysis
               and exclusive network access, we secure properties that guarantee
