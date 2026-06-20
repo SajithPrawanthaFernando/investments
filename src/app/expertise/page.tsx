@@ -131,25 +131,23 @@ export default function ExpertisePage() {
   return (
     <div ref={containerRef} className="w-full bg-background min-h-screen">
       {/* 1. Hero Section (Stats removed from here) */}
-      <section className="pt-32 pb-20 border-b border-surface">
+      <section className="md:pt-32 pt-16 md:pb-20 pb-24 border-b border-surface">
         <div className="max-w-[1440px] mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-6">
             <div>
-              <span className="hero-text inline-block text-brand font-bold tracking-widest uppercase text-sm mb-6">
-                Our Expertise
-              </span>
-              <h1 className="hero-text text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.1] mb-6">
-                Mastering the <br /> Sri Lankan market.
+              <h1 className="hero-text text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.1] ">
+                Mastering the <br />{" "}
+                <span className="text-brand">Sri Lankan market.</span>
               </h1>
             </div>
-            <div className="flex items-end">
-              <p className="hero-text text-xl text-muted leading-relaxed max-w-lg">
-                We bridge the gap between high-net-worth capital and Sri Lanka's
-                most lucrative real estate assets. Through rigorous data
-                analysis and exclusive network access, we secure properties that
-                guarantee elite yields.
-              </p>
-            </div>
+          </div>
+          <div className="flex items-end">
+            <p className="text-lg text-muted max-w-2xl mb-8">
+              We bridge the gap between high-net-worth capital and Sri Lanka's
+              most lucrative real estate assets. Through rigorous data analysis
+              and exclusive network access, we secure properties that guarantee
+              elite yields.
+            </p>
           </div>
         </div>
       </section>
@@ -203,7 +201,7 @@ export default function ExpertisePage() {
               return (
                 <div
                   key={i}
-                  className="pillar-card bg-background  p-10 border border-slate-100 dark:border-white/5"
+                  className="pillar-card bg-background  p-10 border border-white/5"
                 >
                   <div className="w-14 h-14 bg-brand/10 text-brand flex items-center justify-center mb-8">
                     <Icon size={28} />

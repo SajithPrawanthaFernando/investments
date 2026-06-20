@@ -1,29 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  /* Core Canvas */
-  --background: #ffffff; /* Pure crisp white */
-  --surface: #f4f7f9; /* A very subtle, icy off-white for your boxy cards to stand out */
+  /* Core Canvas (Locked to Dark Mode) */
+  --background: #081121;
+  --surface: #0f172a;
 
   /* Typography & Lines */
-  --foreground: #0f172a; /* Deep slate/navy instead of harsh black */
-  --foreground-muted: #64748b; /* For secondary text (e.g., location details) */
+  --foreground: #f8fafc;
+  --foreground-muted: #94a3b8;
 
   /* Brand Colors */
-  --brand-blue: #0047ab; /* A strong, premium Cobalt Blue for buttons/highlights */
-  --brand-navy: #081121; /* An ultra-dark navy for massive 'heavy' sections like the Footer or Hero */
-}
-
-/* Optional: Dark mode inversion for the high-end night-owl investors */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #081121;
-    --surface: #0f172a;
-    --foreground: #f8fafc;
-    --foreground-muted: #94a3b8;
-    --brand-blue: #2563eb; /* Slightly lighter blue for dark mode contrast */
-    --brand-navy: #020617;
-  }
+  --brand-blue: #2563eb; /* Strong blue for buttons/highlights */
+  --brand-navy: #020617; /* Ultra-dark navy for heavy sections */
 }
 
 @theme inline {

@@ -85,7 +85,7 @@ function PropertiesContent() {
   );
 
   return (
-    <div className="w-full bg-background min-h-screen md:pt-32 pt-16 pb-24">
+    <div className="w-full bg-background min-h-screen md:pt-32 pt-16 md:pb-24">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         {/* Page Header */}
         <div ref={headerRef} className="mb-16">
@@ -110,7 +110,7 @@ function PropertiesContent() {
                 "px-6 py-2 text-sm font-semibold transition-all duration-300",
                 activeFilter === filter.value
                   ? "bg-navy text-white"
-                  : "bg-surface text-foreground hover:bg-slate-200 dark:hover:bg-white/10",
+                  : "bg-surface text-foreground hover:bg-white/10",
               )}
             >
               {filter.label}
@@ -127,7 +127,7 @@ function PropertiesContent() {
             {filteredProperties.map((property) => (
               <div
                 key={property.id}
-                className="group flex flex-col bg-surface overflow-hidden border border-slate-100 dark:border-white/5"
+                className="group flex flex-col bg-surface overflow-hidden border border-white/5"
               >
                 {/* Image Container */}
                 <div className="relative h-[300px] overflow-hidden">
@@ -154,19 +154,19 @@ function PropertiesContent() {
                   </div>
 
                   {property.features && (
-                    <p className="text-sm font-medium text-foreground/70 mb-6 pb-6 border-b border-slate-200 dark:border-white/10">
+                    <p className="text-sm font-medium text-foreground/70 mb-6 pb-6 border-b border-white/10">
                       {property.features}
                     </p>
                   )}
 
                   <div className="mt-auto flex items-center justify-between pt-2">
-                    <span className="text-xl font-bold text-navy dark:text-white">
+                    <span className="text-xl font-bold text-white">
                       {property.price}
                     </span>
 
                     <Link
                       href={`/properties/${property.id}`}
-                      className="w-10 h-10 bg-brand text-white flex items-center justify-center hover:bg-navy transition-colors duration-300"
+                      className="w-10 h-10 hover:bg-white hover:text-navy bg-brand text-white flex items-center justify-center  transition-colors duration-300"
                     >
                       <ArrowRight size={20} />
                     </Link>

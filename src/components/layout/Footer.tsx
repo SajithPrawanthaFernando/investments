@@ -41,7 +41,7 @@ export default function Footer() {
           {footerLinks.map((section, index) => (
             <div
               key={section.category}
-              className={`flex flex-col md:flex-row md:items-center py-8 border-b border-slate-200 dark:border-white/10 ${
+              className={`flex flex-col md:flex-row md:items-center py-8 border-b border-white/10 ${
                 index === 0 ? "border-t" : ""
               }`}
             >
@@ -72,7 +72,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Copyright */}
           <p className="text-sm text-muted text-center md:text-left">
-            © Copyright {new Date().getFullYear()} investments.lk. All Rights
+            © Copyright {new Date().getFullYear()} Investments.lk. All Rights
             Reserved.
           </p>
 

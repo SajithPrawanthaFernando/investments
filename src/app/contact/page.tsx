@@ -39,17 +39,15 @@ export default function ContactPage() {
   return (
     <div
       ref={containerRef}
-      className="w-full bg-background min-h-screen md:pt-32 pt-16 pb-24"
+      className="w-full bg-background min-h-screen md:pt-32 pt-16 md:pb-24"
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
           {/* Left Column: Direct Contact Details */}
           <div ref={leftColumnRef} className="flex flex-col justify-center">
-            <span className="inline-block text-brand font-bold tracking-widest uppercase text-sm mb-6">
-              Get in Touch
-            </span>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground leading-[1.1] mb-8">
-              Let's discuss your next investment.
+              Let's discuss your <br />{" "}
+              <span className="text-brand">next investment.</span>
             </h1>
             <p className="text-lg text-muted mb-12 max-w-md">
               Whether you are looking to acquire a high-yield asset or list a
@@ -133,7 +131,7 @@ export default function ContactPage() {
                   type="text"
                   id="name"
                   placeholder="John Doe"
-                  className="w-full bg-background border border-slate-200 dark:border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 placeholder:text-muted/50"
+                  className="w-full bg-background border border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 placeholder:text-muted/50"
                   required
                 />
               </div>
@@ -151,7 +149,7 @@ export default function ContactPage() {
                     type="email"
                     id="email"
                     placeholder="john@example.com"
-                    className="w-full bg-background border border-slate-200 dark:border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 placeholder:text-muted/50"
+                    className="w-full bg-background border border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 placeholder:text-muted/50"
                     required
                   />
                 </div>
@@ -166,7 +164,7 @@ export default function ContactPage() {
                     type="tel"
                     id="phone"
                     placeholder="+94 77 123 4567"
-                    className="w-full bg-background border border-slate-200 dark:border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 placeholder:text-muted/50"
+                    className="w-full bg-background border border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 placeholder:text-muted/50"
                   />
                 </div>
               </div>
@@ -182,7 +180,7 @@ export default function ContactPage() {
                 <div className="relative">
                   <select
                     id="interest"
-                    className="w-full bg-background border border-slate-200 dark:border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 appearance-none rounded-none"
+                    className="w-full bg-background border border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 appearance-none rounded-none"
                     required
                   >
                     <option value="" disabled selected>
@@ -219,14 +217,14 @@ export default function ContactPage() {
                   id="message"
                   rows={4}
                   placeholder="Tell us about your investment criteria or property specifications..."
-                  className="w-full bg-background border border-slate-200 dark:border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 placeholder:text-muted/50 resize-none"
+                  className="w-full bg-background border border-white/10 px-5 py-4 text-foreground outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 placeholder:text-muted/50 resize-none"
                 ></textarea>
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
-                className="group mt-4 w-full bg-brand text-white py-5 font-bold tracking-widest uppercase flex items-center justify-center gap-3 hover:bg-navy transition-colors duration-300"
+                className="group mt-4 w-full hover:bg-white hover:text-navy bg-brand text-white py-5 font-bold tracking-widest uppercase flex items-center justify-center gap-3  transition-colors duration-300"
               >
                 Submit Inquiry
                 <ArrowRight

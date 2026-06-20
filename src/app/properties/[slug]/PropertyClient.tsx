@@ -38,7 +38,7 @@ export default function PropertyClient({ property }: { property: any }) {
   );
 
   return (
-    <div className="w-full bg-background min-h-screen pt-12 pb-24">
+    <div className="w-full bg-background min-h-screen pt-12 md:pb-24">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         {/* Breadcrumb / Nav */}
         <Link
@@ -65,7 +65,7 @@ export default function PropertyClient({ property }: { property: any }) {
             {/* The Interactive Interactive Gallery */}
             <div className="mb-12">
               {/* Main Image Viewer */}
-              <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden bg-surface mb-4 border border-slate-100 dark:border-white/5">
+              <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden bg-surface mb-4 border border-white/5">
                 <div
                   ref={mainImageRef}
                   className="absolute inset-0 bg-cover bg-center"
@@ -112,12 +112,12 @@ export default function PropertyClient({ property }: { property: any }) {
 
           {/* Right Column: Sticky Inquiry Panel */}
           <div className="lg:col-span-1">
-            <div className="sticky top-28 bg-surface p-8 border border-slate-100 dark:border-white/5">
+            <div className="sticky top-28 bg-surface p-8 border border-white/5">
               <div className="mb-8">
                 <p className="text-sm font-bold uppercase tracking-widest text-muted mb-2">
                   Listing Price
                 </p>
-                <h2 className="text-4xl font-bold text-navy dark:text-white">
+                <h2 className="text-4xl font-bold text-white">
                   {property.price}
                 </h2>
               </div>
@@ -126,21 +126,21 @@ export default function PropertyClient({ property }: { property: any }) {
               <div className="space-y-4">
                 <Link
                   href="/contact"
-                  className="w-full bg-brand text-white py-4 font-semibold flex items-center justify-center gap-2 hover:bg-navy transition-colors duration-300"
+                  className="w-full hover:bg-white hover:text-navy bg-brand text-white py-4 font-semibold flex items-center justify-center gap-2 transition-colors duration-300"
                 >
                   Inquire Now <ArrowRight size={18} />
                 </Link>
 
-                <div className="flex gap-4 pt-6 border-t border-slate-200 dark:border-white/10">
+                <div className="flex gap-4 pt-6 border-t border-white/10">
                   <a
                     href="tel:+94112223344"
-                    className="flex-1 flex items-center justify-center gap-2 border border-slate-300 dark:border-white/20 py-3 text-sm font-medium hover:bg-surface transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 border border-white/20 py-3 text-sm font-medium hover:bg-surface transition-colors"
                   >
                     <Phone size={16} /> Call
                   </a>
                   <a
                     href="mailto:invest@investments.lk"
-                    className="flex-1 flex items-center justify-center gap-2 border border-slate-300 dark:border-white/20 py-3 text-sm font-medium hover:bg-surface transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 border border-white/20 py-3 text-sm font-medium hover:bg-surface transition-colors"
                   >
                     <Mail size={16} /> Email
                   </a>
@@ -148,7 +148,7 @@ export default function PropertyClient({ property }: { property: any }) {
               </div>
 
               {/* Quick Spec Box */}
-              <div className="mt-8 p-6 bg-white dark:bg-navy/50 border border-slate-100 dark:border-white/10">
+              <div className="mt-8 p-6 bg-navy/50 border border-white/10">
                 <h4 className="font-bold text-sm mb-4 uppercase">
                   Property Details
                 </h4>

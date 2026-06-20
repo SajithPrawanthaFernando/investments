@@ -44,16 +44,16 @@ export default function DualCtaBlock() {
 
             <div>
               <span className="inline-block border border-white/30 px-4 py-1.5 text-xs font-bold tracking-widest uppercase mb-8">
-                Partnerships
+                Do you own a property we should list and feature here?
               </span>
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-[1.1] max-w-sm">
-                Want to list your premium property?
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-[1.1] md:max-w-md">
+                Get your property featured!
               </h2>
             </div>
 
             <div className="flex items-end justify-between mt-12 md:mt-0">
               <p className="text-sm font-medium text-white/70 group-hover:text-white transition-colors duration-300">
-                Explore Opportunities
+                Contact us!
               </p>
             </div>
           </Link>
@@ -80,7 +80,8 @@ export default function DualCtaBlock() {
                 Get in touch
               </span>
               <p className="text-lg text-white/90 mb-4">
-                Accelerate your investment goals
+                Explore investment options aligned with your budget and risk
+                comfort.
               </p>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] max-w-md">
                 Speak to our experts.

@@ -155,7 +155,7 @@ export default function HeroVideo() {
         <div className="hero-cta mt-8 pointer-events-auto">
           <Link
             href="/properties"
-            className="inline-flex items-center justify-center bg-white text-navy px-10 py-4 text-sm font-semibold hover:bg-brand hover:text-white transition-colors duration-300"
+            className="inline-flex items-center justify-center hover:bg-white hover:text-navy bg-brand text-white px-10 py-4 text-sm font-semibold transition-colors duration-300"
           >
             Explore Portfolio
           </Link>

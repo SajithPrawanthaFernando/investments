@@ -141,7 +141,7 @@ export default function CategoryGrid() {
             </p>
             <Link
               href="/properties"
-              className="inline-flex items-center justify-center bg-brand text-white px-8 py-3 text-sm font-semibold hover:bg-navy transition-colors duration-300"
+              className="inline-flex items-center justify-center hover:bg-white hover:text-navy bg-brand text-white px-8 py-3 text-sm font-semibold  transition-colors duration-300"
             >
               Browse all
             </Link>

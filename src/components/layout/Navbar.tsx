@@ -8,7 +8,6 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-// Quick utility for cleaner tailwind class merging
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -27,7 +26,6 @@ function NavbarContent() {
   const navRef = useRef<HTMLElement>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // GSAP: Slide down gracefully on initial page load
   useGSAP(
     () => {
       gsap.from(navRef.current, {
@@ -44,17 +42,18 @@ function NavbarContent() {
     <header
       ref={navRef}
       className={cn(
-        "sticky top-0 z-50 w-full border-b border-surface transition-colors duration-300",
-        // CRITICAL FIX: Make the header fully solid Navy when the menu is open
-        // so text from the page doesn't bleed behind the logo.
-        isMobileMenuOpen ? "bg-navy" : "bg-background backdrop-blur-lg",
+        // CRITICAL FIX: Replaced border-surface with border-white/10
+        "sticky top-0 z-50 w-full border-b border-white/10 transition-colors duration-300",
+        // CRITICAL FIX: Forced bg-navy instead of adapting bg-background
+        isMobileMenuOpen ? "bg-navy" : "bg-navy/80 backdrop-blur-lg",
       )}
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1 z-50 relative">
-          <span className="text-2xl font-bold tracking-tight text-foreground">
-            investments<span className="text-brand">.lk</span>
+          {/* CRITICAL FIX: Replaced text-foreground with explicit text-white */}
+          <span className="text-2xl font-bold tracking-tight text-white">
+            Investments<span className="text-brand">.lk</span>
           </span>
         </Link>
 
@@ -77,7 +76,10 @@ function NavbarContent() {
                 className={cn(
                   "relative py-1 text-sm font-medium transition-colors hover:text-brand",
                   "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-brand after:transition-transform after:duration-300 hover:after:scale-x-100",
-                  isActive ? "text-brand after:scale-x-100" : "text-foreground",
+                  // CRITICAL FIX: Replaced text-foreground with explicit text-white
+                  isActive
+                    ? "text-brand after:scale-x-100"
+                    : "text-white/90 hover:text-white",
                 )}
               >
                 {link.name}
@@ -90,7 +92,7 @@ function NavbarContent() {
         <div className="hidden md:block z-50 relative">
           <Link
             href="/contact"
-            className="bg-brand text-white px-8 py-3 text-sm font-semibold hover:bg-navy transition-colors duration-300 inline-block"
+            className="bg-brand text-white px-8 py-3 text-sm font-semibold hover:bg-white hover:text-navy  transition-colors duration-300 inline-block"
           >
             Contact us
           </Link>
@@ -98,7 +100,8 @@ function NavbarContent() {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden p-2 text-foreground z-50 relative"
+          // CRITICAL FIX: Replaced text-foreground with explicit text-white
+          className="md:hidden p-2 text-white z-50 relative"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle Menu"
         >
@@ -110,7 +113,6 @@ function NavbarContent() {
       <div
         className={cn(
           "fixed inset-0 z-40 h-screen flex flex-col items-center justify-start pt-32 pb-10 gap-8 overflow-y-auto transition-transform duration-500 ease-in-out md:hidden",
-          // CRITICAL FIX: Use the solid bg-navy to block all background images from bleeding through
           "bg-navy",
           isMobileMenuOpen ? "translate-y-0" : "-translate-y-full",
         )}
@@ -131,7 +133,8 @@ function NavbarContent() {
               onClick={() => setIsMobileMenuOpen(false)}
               className={cn(
                 "text-2xl font-medium transition-colors",
-                isActive ? "text-brand" : "text-foreground hover:text-brand",
+                // CRITICAL FIX: Replaced text-foreground with explicit text-white
+                isActive ? "text-brand" : "text-white hover:text-brand",
               )}
             >
               {link.name}
@@ -154,7 +157,8 @@ export default function Navbar() {
   return (
     <Suspense
       fallback={
-        <div className="h-20 w-full bg-background border-b border-surface" />
+        // CRITICAL FIX: Updated fallback classes
+        <div className="h-20 w-full bg-navy border-b border-white/10" />
       }
     >
       <NavbarContent />
