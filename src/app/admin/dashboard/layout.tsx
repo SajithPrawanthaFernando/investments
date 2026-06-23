@@ -84,7 +84,7 @@ export default function AdminLayout({
           </div>
 
           {/* Sidebar Links */}
-          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-white/5">
             {sidebarLinks.map((link) => {
               const Icon = link.icon;
               const isActive = pathname === link.href;
@@ -123,42 +123,8 @@ export default function AdminLayout({
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          {/* Top Header */}
-          <header className="h-20 bg-background/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 lg:px-10 z-30">
-            <div className="flex items-center gap-4">
-              <button
-                className="lg:hidden text-white/70 hover:text-white"
-                onClick={() => setIsMobileSidebarOpen(true)}
-              >
-                <Menu size={24} />
-              </button>
-              <h2 className="text-lg font-bold text-white hidden sm:block">
-                {sidebarLinks.find((l) => l.href === pathname)?.name ||
-                  "Dashboard"}
-              </h2>
-            </div>
-
-            <div className="flex items-center gap-6">
-              <button className="text-white/50 hover:text-white transition-colors relative">
-                <Bell size={20} />
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-brand rounded-full" />
-              </button>
-              <div className="flex items-center gap-3 pl-6 border-l border-white/10">
-                <div className="w-8 h-8 bg-brand text-white flex items-center justify-center font-bold text-sm">
-                  A
-                </div>
-                <div className="hidden md:block text-sm">
-                  <p className="font-bold text-white leading-none">
-                    Admin User
-                  </p>
-                  <p className="text-white/50 text-xs mt-1">Superadmin</p>
-                </div>
-              </div>
-            </div>
-          </header>
-
           {/* Scrollable Page Content */}
-          <main className="flex-1 overflow-y-auto bg-background p-6 lg:p-10">
+          <main className="flex-1 overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-white/5 p-6 lg:p-10">
             <div className="max-w-[1200px] mx-auto">{children}</div>
           </main>
         </div>

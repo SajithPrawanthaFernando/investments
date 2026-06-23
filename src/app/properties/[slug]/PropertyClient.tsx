@@ -1,4 +1,3 @@
-// src/app/properties/[slug]/PropertyClient.tsx
 "use client";
 
 import { useState, useRef } from "react";
@@ -12,15 +11,32 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// Accept the property data as a prop from the Server Component
+// Utility to format raw database statuses into display text
+const formatStatus = (status: string) => {
+  if (!status) return "Available";
+  switch (status) {
+    case "under_offer":
+      return "Under Offer";
+    case "sold":
+      return "Sold";
+    case "rented":
+      return "Rented";
+    case "active":
+      return "Available";
+    default:
+      return status;
+  }
+};
+
 export default function PropertyClient({ property }: { property: any }) {
-  // 1. Setup the gallery data and state
-  const galleryImages = property.gallery || [
-    property?.image,
-    "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2070&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2070&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
-  ];
+  // 1. Setup the gallery data using the new Supabase `images` array
+  // We provide a fallback image just in case an admin uploads a property with zero images
+  const galleryImages =
+    property.images && property.images.length > 0
+      ? property.images
+      : [
+          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
+        ];
 
   const [activeImage, setActiveImage] = useState<string>(galleryImages[0]);
   const mainImageRef = useRef<HTMLDivElement>(null);
@@ -38,7 +54,7 @@ export default function PropertyClient({ property }: { property: any }) {
   );
 
   return (
-    <div className="w-full bg-background min-h-screen pt-12 md:pb-24">
+    <div className="w-full bg-background min-h-screen pt-24 md:pb-24">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         {/* Breadcrumb / Nav */}
         <Link
@@ -56,13 +72,27 @@ export default function PropertyClient({ property }: { property: any }) {
               <h1 className="text-4xl md:text-6xl font-bold text-foreground tracking-tight mb-6 leading-[1.1]">
                 {property.title}
               </h1>
+
+              {/* Clickable Location Link */}
               <div className="flex items-center gap-2 text-brand font-semibold text-lg">
                 <MapPin size={20} />
-                {property.location}
+                {property.locationUrl ? (
+                  <a
+                    href={property.locationUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white hover:underline underline-offset-4 transition-all duration-300"
+                    title="View on Google Maps"
+                  >
+                    {property.location}
+                  </a>
+                ) : (
+                  <span>{property.location}</span>
+                )}
               </div>
             </div>
 
-            {/* The Interactive Interactive Gallery */}
+            {/* The Interactive Gallery */}
             <div className="mb-12">
               {/* Main Image Viewer */}
               <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden bg-surface mb-4 border border-white/5">
@@ -73,26 +103,28 @@ export default function PropertyClient({ property }: { property: any }) {
                 />
               </div>
 
-              {/* Thumbnail Strip */}
-              <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                {galleryImages.map((img: string, index: number) => (
-                  <button
-                    key={index}
-                    onClick={() => setActiveImage(img)}
-                    className={cn(
-                      "relative shrink-0 w-24 h-24 md:w-32 md:h-32 snap-start overflow-hidden border-2 transition-all duration-300",
-                      activeImage === img
-                        ? "border-brand opacity-100"
-                        : "border-transparent opacity-60 hover:opacity-100",
-                    )}
-                  >
-                    <div
-                      className="absolute inset-0 bg-cover bg-center transition-transform duration-500 hover:scale-110"
-                      style={{ backgroundImage: `url(${img})` }}
-                    />
-                  </button>
-                ))}
-              </div>
+              {/* Thumbnail Strip (Only show if there are multiple images) */}
+              {galleryImages.length > 1 && (
+                <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                  {galleryImages.map((img: string, index: number) => (
+                    <button
+                      key={index}
+                      onClick={() => setActiveImage(img)}
+                      className={cn(
+                        "relative shrink-0 w-24 h-24 md:w-32 md:h-32 snap-start overflow-hidden border-2 transition-all duration-300",
+                        activeImage === img
+                          ? "border-brand opacity-100"
+                          : "border-transparent opacity-60 hover:opacity-100",
+                      )}
+                    >
+                      <div
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 hover:scale-110"
+                        style={{ backgroundImage: `url(${img})` }}
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Description */}
@@ -100,25 +132,21 @@ export default function PropertyClient({ property }: { property: any }) {
               <h3 className="text-2xl font-bold text-foreground mb-4">
                 Investment Overview
               </h3>
-              <p>
-                This exclusive property represents a premier opportunity in the{" "}
-                {property.location} market. Designed with precision and situated
-                in a high-growth corridor, it offers exceptional potential for
-                both long-term capital appreciation and immediate yield.{" "}
-                {property.features}
-              </p>
+              <p className="whitespace-pre-wrap">{property.description}</p>
             </div>
           </div>
 
           {/* Right Column: Sticky Inquiry Panel */}
           <div className="lg:col-span-1">
-            <div className="sticky top-28 bg-surface p-8 border border-white/5">
+            <div className="sticky top-28 bg-surface p-8 border border-white/5 shadow-xl shadow-black/20">
               <div className="mb-8">
                 <p className="text-sm font-bold uppercase tracking-widest text-muted mb-2">
                   Listing Price
                 </p>
-                <h2 className="text-4xl font-bold text-white">
-                  {property.price}
+                {/* LKR Format Wrapper - Strips out accidental $ signs from database */}
+                <h2 className="text-4xl font-bold text-white flex items-baseline gap-2">
+                  <span className="text-xl text-brand">LKR</span>
+                  {property.price?.replace(/^\$/, "")}
                 </h2>
               </div>
 
@@ -133,14 +161,14 @@ export default function PropertyClient({ property }: { property: any }) {
 
                 <div className="flex gap-4 pt-6 border-t border-white/10">
                   <a
-                    href="tel:+94112223344"
-                    className="flex-1 flex items-center justify-center gap-2 border border-white/20 py-3 text-sm font-medium hover:bg-surface transition-colors"
+                    href="tel:+94112345678"
+                    className="flex-1 flex items-center justify-center gap-2 border border-white/20 py-3 text-sm font-medium hover:bg-surface transition-colors text-white"
                   >
                     <Phone size={16} /> Call
                   </a>
                   <a
                     href="mailto:invest@investments.lk"
-                    className="flex-1 flex items-center justify-center gap-2 border border-white/20 py-3 text-sm font-medium hover:bg-surface transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 border border-white/20 py-3 text-sm font-medium hover:bg-surface transition-colors text-white"
                   >
                     <Mail size={16} /> Email
                   </a>
@@ -149,7 +177,7 @@ export default function PropertyClient({ property }: { property: any }) {
 
               {/* Quick Spec Box */}
               <div className="mt-8 p-6 bg-navy/50 border border-white/10">
-                <h4 className="font-bold text-sm mb-4 uppercase">
+                <h4 className="font-bold text-sm mb-4 uppercase text-white">
                   Property Details
                 </h4>
                 <ul className="space-y-3 text-sm text-muted">
@@ -161,14 +189,25 @@ export default function PropertyClient({ property }: { property: any }) {
                   </li>
                   <li className="flex justify-between">
                     <span>Status</span>{" "}
-                    <span className="text-foreground font-medium">
-                      Available
+                    <span
+                      className={cn(
+                        "font-bold uppercase tracking-wider text-[10px] px-2 py-0.5",
+                        property.status === "active"
+                          ? "bg-green-500/20 text-green-400"
+                          : property.status === "sold"
+                            ? "bg-brand/20 text-brand"
+                            : property.status === "rented"
+                              ? "bg-purple-500/20 text-purple-400"
+                              : "bg-yellow-500/20 text-yellow-400",
+                      )}
+                    >
+                      {formatStatus(property.status)}
                     </span>
                   </li>
-                  <li className="flex justify-between">
+                  <li className="flex justify-between items-center">
                     <span>Reference</span>{" "}
-                    <span className="text-foreground font-medium">
-                      INV-{property.id}009
+                    <span className="text-foreground font-medium text-xs">
+                      {property.id.split("-")[0].toUpperCase()}
                     </span>
                   </li>
                 </ul>

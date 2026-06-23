@@ -1,12 +1,21 @@
-// src/app/properties/[slug]/page.tsx
 import { notFound } from "next/navigation";
-import { properties } from "@/data/properties";
-import PropertyClient from "./PropertyClient"; // We will create this next
+import { createClient } from "@supabase/supabase-js";
+import PropertyClient from "./PropertyClient";
 
+// Initialize a standard Supabase client for fetching public server-side data
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Generate static routes for all properties to keep the site blazing fast
 export async function generateStaticParams() {
-  return properties.map((property) => ({
-    slug: property.id,
-  }));
+  const { data: properties } = await supabase.from("properties").select("id");
+
+  return (
+    properties?.map((property) => ({
+      slug: property.id,
+    })) || []
+  );
 }
 
 export default async function PropertyDetail({
@@ -14,12 +23,20 @@ export default async function PropertyDetail({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  // Await the params directly on the server
   const resolvedParams = await params;
-  const property = properties.find((p) => p.id === resolvedParams.slug);
 
-  if (!property) return notFound();
+  // Fetch the specific property from the database
+  const { data: property, error } = await supabase
+    .from("properties")
+    .select("*")
+    .eq("id", resolvedParams.slug)
+    .single();
 
-  // Pass the found property down to your interactive client component
+  // If there's an error or no property is found, trigger the 404 page
+  if (error || !property) {
+    return notFound();
+  }
+
+  // Pass the real database property down to the interactive client component
   return <PropertyClient property={property} />;
 }

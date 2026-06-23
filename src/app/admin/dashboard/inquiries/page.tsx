@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Trash2,
@@ -12,63 +12,110 @@ import {
   Building,
   Home,
   MessageSquare,
+  Loader2,
+  Send,
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { createClient } from "@/utils/client";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// Simulated inquiry data
-const initialInquiries = [
-  {
-    id: "INQ-001",
-    name: "Michael Chen",
-    email: "m.chen@example.com",
-    phone: "+65 9123 4567",
-    type: "invest",
-    category: "Luxury Apartments",
-    message:
-      "I am looking for a 3-bedroom luxury apartment in Colombo 01. Budget is around $500k. Looking to finalize within the next 2 months.",
-    status: "unread",
-    date: "Jun 22, 2026",
-  },
-  {
-    id: "INQ-002",
-    name: "Sarah Wijeratne",
-    email: "sarah.w@example.lk",
-    phone: "+94 77 123 4567",
-    type: "list",
-    category: "Exclusive Lands",
-    message:
-      "I have a 40-perch beachfront land in Unawatuna that I would like to list with your agency. Please call me to discuss terms.",
-    status: "read",
-    date: "Jun 21, 2026",
-  },
-  {
-    id: "INQ-003",
-    name: "David Sterling",
-    email: "david@sterlingholdings.com",
-    phone: "+44 7700 900077",
-    type: "invest",
-    category: "Commercial Buildings",
-    message:
-      "Our firm is exploring commercial real estate opportunities in Kandy. We need a property with at least 10,000 sqft of office space for a new regional hub.",
-    status: "contacted",
-    date: "Jun 19, 2026",
-  },
-];
+// Helper to format Supabase ISO dates
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
 
 export default function AdminInquiries() {
-  const [inquiries, setInquiries] = useState(initialInquiries);
+  const supabase = createClient();
+
+  // --- STATE ---
+  const [inquiries, setInquiries] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
-  const [selectedInquiry, setSelectedInquiry] = useState<
-    (typeof initialInquiries)[0] | null
-  >(null);
+  const [selectedInquiry, setSelectedInquiry] = useState<any | null>(null);
 
-  // Filter logic
+  // State for the direct email reply feature
+  const [replyMessage, setReplyMessage] = useState("");
+
+  // --- FETCH DATA ---
+  useEffect(() => {
+    fetchInquiries();
+  }, []);
+
+  const fetchInquiries = async () => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from("inquiries")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (!error && data) {
+      setInquiries(data);
+    }
+    setIsLoading(false);
+  };
+
+  // --- ACTIONS ---
+  const deleteInquiry = async (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (confirm("Are you sure you want to delete this inquiry?")) {
+      // Optimistic UI Update
+      setInquiries(inquiries.filter((i) => i.id !== id));
+      if (selectedInquiry?.id === id) setSelectedInquiry(null);
+
+      // Database Delete
+      await supabase.from("inquiries").delete().eq("id", id);
+    }
+  };
+
+  const updateStatus = async (id: string, newStatus: string) => {
+    // Optimistic UI Update
+    setInquiries(
+      inquiries.map((i) => (i.id === id ? { ...i, status: newStatus } : i)),
+    );
+    if (selectedInquiry?.id === id) {
+      setSelectedInquiry({ ...selectedInquiry, status: newStatus });
+    }
+
+    // Database Update
+    await supabase.from("inquiries").update({ status: newStatus }).eq("id", id);
+  };
+
+  const handleRowClick = (inquiry: any) => {
+    setSelectedInquiry(inquiry);
+    setReplyMessage(""); // Clear previous draft
+
+    // Auto-mark as read if it was unread
+    if (inquiry.status === "unread") {
+      updateStatus(inquiry.id, "read");
+    }
+  };
+
+  const handleEmailReply = () => {
+    if (!selectedInquiry) return;
+
+    const subject = `Re: Your Inquiry on Investments.lk - ${selectedInquiry.category}`;
+    // Construct the mailto link with encoded subject and body
+    const mailtoLink = `mailto:${selectedInquiry.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(replyMessage)}`;
+
+    // Open the default mail client
+    window.location.href = mailtoLink;
+
+    // Automatically mark as contacted since we are replying
+    if (selectedInquiry.status !== "contacted") {
+      updateStatus(selectedInquiry.id, "contacted");
+    }
+  };
+
+  // --- FILTERS ---
   const filteredInquiries = inquiries.filter((inq) => {
     const matchesSearch =
       inq.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -76,32 +123,6 @@ export default function AdminInquiries() {
     const matchesType = filterType === "all" || inq.type === filterType;
     return matchesSearch && matchesType;
   });
-
-  // Action Handlers
-  const deleteInquiry = (id: string, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    if (confirm("Are you sure you want to delete this inquiry?")) {
-      setInquiries(inquiries.filter((i) => i.id !== id));
-      if (selectedInquiry?.id === id) setSelectedInquiry(null);
-    }
-  };
-
-  const updateStatus = (id: string, newStatus: string) => {
-    setInquiries(
-      inquiries.map((i) => (i.id === id ? { ...i, status: newStatus } : i)),
-    );
-    if (selectedInquiry?.id === id) {
-      setSelectedInquiry({ ...selectedInquiry, status: newStatus });
-    }
-  };
-
-  const handleRowClick = (inquiry: (typeof initialInquiries)[0]) => {
-    setSelectedInquiry(inquiry);
-    // Auto-mark as read if it was unread
-    if (inquiry.status === "unread") {
-      updateStatus(inquiry.id, "read");
-    }
-  };
 
   return (
     <div className="space-y-8 pb-10">
@@ -132,7 +153,7 @@ export default function AdminInquiries() {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="bg-background border border-white/10 px-4 py-3 text-sm text-white outline-none focus:border-brand transition-colors appearance-none flex-1 md:flex-none"
+            className="bg-background border border-white/10 px-4 py-3 text-sm text-white outline-none focus:border-brand transition-colors appearance-none flex-1 md:flex-none cursor-pointer"
           >
             <option value="all">All Inquiries</option>
             <option value="invest">Investors</option>
@@ -164,7 +185,14 @@ export default function AdminInquiries() {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {filteredInquiries.length > 0 ? (
+            {isLoading ? (
+              <tr>
+                <td colSpan={5} className="py-12 text-center text-white/50">
+                  <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
+                  Loading inquiries...
+                </td>
+              </tr>
+            ) : filteredInquiries.length > 0 ? (
               filteredInquiries.map((inquiry) => (
                 <tr
                   key={inquiry.id}
@@ -212,8 +240,8 @@ export default function AdminInquiries() {
                       </span>
                     </span>
                   </td>
-                  <td className="py-4 px-6 text-xs text-white/60">
-                    {inquiry.date}
+                  <td className="py-4 px-6 text-xs text-white/60 whitespace-nowrap">
+                    {formatDate(inquiry.created_at)}
                   </td>
                   <td className="py-4 px-6">
                     <div className="flex items-center justify-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
@@ -245,14 +273,12 @@ export default function AdminInquiries() {
       {/* Slide-over View Modal */}
       {selectedInquiry && (
         <div className="fixed inset-0 z-[100] flex justify-end">
-          {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             onClick={() => setSelectedInquiry(null)}
           />
 
-          {/* Panel */}
-          <div className="relative w-full max-w-xl bg-background border-l border-white/10 h-full flex flex-col shadow-2xl transform transition-transform duration-300">
+          <div className="relative w-full max-w-3xl bg-background border-l border-white/10 h-full flex flex-col shadow-2xl transform transition-transform duration-300">
             {/* Modal Header */}
             <div className="h-20 flex items-center justify-between px-8 border-b border-white/10 bg-surface shrink-0">
               <h2 className="text-lg font-bold text-white flex items-center gap-3">
@@ -325,16 +351,31 @@ export default function AdminInquiries() {
                 </div>
               </div>
 
-              {/* Message Content */}
+              {/* Original Message Content */}
               <div className="space-y-3">
                 <h3 className="text-sm font-bold uppercase tracking-widest text-brand border-b border-white/5 pb-2">
-                  Message
+                  Client Message
                 </h3>
                 <div className="bg-surface border border-white/5 p-6">
                   <p className="text-white/80 leading-relaxed whitespace-pre-wrap">
-                    {selectedInquiry.message}
+                    {selectedInquiry.message ||
+                      "No additional message provided."}
                   </p>
                 </div>
+              </div>
+
+              {/* Direct Email Reply Tool */}
+              <div className="space-y-3 pt-4 border-t border-white/10">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-white border-b border-white/5 pb-2 flex items-center gap-2">
+                  <Mail size={16} /> Quick Email Reply
+                </h3>
+                <textarea
+                  rows={6}
+                  value={replyMessage}
+                  onChange={(e) => setReplyMessage(e.target.value)}
+                  placeholder="Type your response here..."
+                  className="w-full bg-background border border-white/10 px-5 py-4 text-white outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all duration-300 placeholder:text-white/30 resize-none text-sm"
+                />
               </div>
             </div>
 
@@ -347,7 +388,7 @@ export default function AdminInquiries() {
                 <Trash2 size={16} /> Delete
               </button>
 
-              <div className="flex gap-4 w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 {selectedInquiry.status !== "contacted" && (
                   <button
                     onClick={() =>
@@ -355,14 +396,29 @@ export default function AdminInquiries() {
                     }
                     className="w-full sm:w-auto px-6 py-3 border border-brand text-brand hover:bg-brand hover:text-white font-bold text-sm uppercase tracking-wider transition-colors"
                   >
-                    Mark as Contacted
+                    Mark Contacted
                   </button>
                 )}
+
+                {/* Send Email Action */}
+                <button
+                  onClick={handleEmailReply}
+                  disabled={!replyMessage.trim()}
+                  className="w-full sm:w-auto bg-brand hover:bg-white hover:text-navy text-white px-6 py-3 font-bold text-sm uppercase tracking-wider transition-colors duration-300 text-center flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send size={16} /> Send Email
+                </button>
+
+                {/* WhatsApp Action */}
                 <a
                   href={`https://wa.me/${selectedInquiry.phone.replace(/[^0-9]/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto bg-green-600 hover:bg-green-500 text-white px-8 py-3 font-bold text-sm uppercase tracking-wider transition-colors duration-300 text-center flex items-center justify-center gap-2"
+                  onClick={() => {
+                    if (selectedInquiry.status !== "contacted")
+                      updateStatus(selectedInquiry.id, "contacted");
+                  }}
+                  className="w-full sm:w-auto bg-green-600 hover:bg-green-500 text-white px-6 py-3 font-bold text-sm uppercase tracking-wider transition-colors duration-300 text-center flex items-center justify-center gap-2"
                 >
                   <Phone size={16} /> WhatsApp
                 </a>

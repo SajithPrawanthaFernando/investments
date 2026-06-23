@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, Suspense } from "react";
+import { useRef, useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -13,9 +13,9 @@ function cn(...inputs: ClassValue[]) {
 }
 
 const navLinks = [
-  { name: "Lands", href: "/properties?type=land" },
-  { name: "Apartments", href: "/properties?type=apartment" },
-  { name: "Houses", href: "/properties?type=house" },
+  { name: "Lands", href: "/properties?type=lands" },
+  { name: "Houses", href: "/properties?type=houses" },
+  { name: "Apartments", href: "/properties?type=apartments" },
   { name: "Commercial", href: "/properties?type=commercial" },
   { name: "Expertise", href: "/expertise" },
 ];
@@ -25,6 +25,22 @@ function NavbarContent() {
   const searchParams = useSearchParams();
   const navRef = useRef<HTMLElement>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false); // Track scroll state
+
+  // Handle scroll detection
+  useEffect(() => {
+    const handleScroll = () => {
+      // If we scroll down more than 20px, trigger the solid state
+      if (window.scrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useGSAP(
     () => {
@@ -42,16 +58,19 @@ function NavbarContent() {
     <header
       ref={navRef}
       className={cn(
-        // CRITICAL FIX: Replaced border-surface with border-white/10
-        "sticky top-0 z-50 w-full border-b border-white/10 transition-colors duration-300",
-        // CRITICAL FIX: Forced bg-navy instead of adapting bg-background
-        isMobileMenuOpen ? "bg-navy" : "bg-navy/80 backdrop-blur-lg",
+        // Changed to 'fixed' to overlay the hero image
+        "fixed top-0 z-50 w-full transition-all duration-300",
+        // Logic for background and border states
+        isMobileMenuOpen
+          ? "bg-navy border-b border-white/10" // Solid when mobile menu is open
+          : isScrolled
+            ? "bg-navy/80 backdrop-blur-lg border-b border-white/10 shadow-lg" // Frosted glass when scrolled
+            : "bg-transparent border-transparent", // Transparent at the very top
       )}
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1 z-50 relative">
-          {/* CRITICAL FIX: Replaced text-foreground with explicit text-white */}
           <span className="text-2xl font-bold tracking-tight text-white">
             Investments<span className="text-brand">.lk</span>
           </span>
@@ -76,7 +95,6 @@ function NavbarContent() {
                 className={cn(
                   "relative py-1 text-sm font-medium transition-colors hover:text-brand",
                   "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-brand after:transition-transform after:duration-300 hover:after:scale-x-100",
-                  // CRITICAL FIX: Replaced text-foreground with explicit text-white
                   isActive
                     ? "text-brand after:scale-x-100"
                     : "text-white/90 hover:text-white",
@@ -100,7 +118,6 @@ function NavbarContent() {
 
         {/* Mobile Menu Toggle */}
         <button
-          // CRITICAL FIX: Replaced text-foreground with explicit text-white
           className="md:hidden p-2 text-white z-50 relative"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle Menu"
@@ -112,7 +129,7 @@ function NavbarContent() {
       {/* Mobile Menu Overlay */}
       <div
         className={cn(
-          "fixed inset-0 z-40 h-screen flex flex-col items-center justify-start pt-32 pb-10 gap-8 overflow-y-auto transition-transform duration-500 ease-in-out md:hidden",
+          "fixed inset-0 z-40 h-screen flex flex-col items-center justify-start pt-50 pb-10 gap-8 overflow-y-auto transition-transform duration-500 ease-in-out md:hidden",
           "bg-navy",
           isMobileMenuOpen ? "translate-y-0" : "-translate-y-full",
         )}
@@ -133,7 +150,6 @@ function NavbarContent() {
               onClick={() => setIsMobileMenuOpen(false)}
               className={cn(
                 "text-2xl font-medium transition-colors",
-                // CRITICAL FIX: Replaced text-foreground with explicit text-white
                 isActive ? "text-brand" : "text-white hover:text-brand",
               )}
             >
@@ -155,12 +171,7 @@ function NavbarContent() {
 
 export default function Navbar() {
   return (
-    <Suspense
-      fallback={
-        // CRITICAL FIX: Updated fallback classes
-        <div className="h-20 w-full bg-navy border-b border-white/10" />
-      }
-    >
+    <Suspense fallback={<div className="h-20 w-full bg-transparent" />}>
       <NavbarContent />
     </Suspense>
   );
