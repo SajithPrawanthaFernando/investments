@@ -92,7 +92,7 @@ export default function HeroVideo() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full h-[83vh] sm:h-[100vh] min-h-[600px] pt-24 flex items-center justify-center overflow-hidden bg-navy"
+      className="relative w-full h-[92vh] sm:h-[100vh] min-h-[600px] pt-24 flex items-center justify-center overflow-hidden bg-navy"
     >
       {/* Dynamic Background Image Layers */}
       {bgImages.map((src, index) => (
