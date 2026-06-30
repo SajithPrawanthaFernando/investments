@@ -35,7 +35,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const router = useRouter(); // Added useRouter
+  const router = useRouter();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // Supabase Logout Handler
@@ -110,7 +110,6 @@ export default function AdminLayout({
 
           {/* Sidebar Footer (Logout) */}
           <div className="p-4 border-t border-white/5">
-            {/* CRITICAL FIX: Changed <Link> to <button> with an onClick handler */}
             <button
               onClick={handleLogout}
               className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-wider text-red-400 hover:text-red-300 hover:bg-red-400/10 transition-colors duration-300"
@@ -123,6 +122,20 @@ export default function AdminLayout({
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          {/* Mobile Top Header - Visible only on small screens */}
+          <header className="lg:hidden h-20 bg-surface border-b border-white/5 flex items-center justify-between px-6 shrink-0">
+            <span className="text-lg font-bold tracking-tight text-white">
+              Admin<span className="text-brand">Panel</span>
+            </span>
+            <button
+              onClick={() => setIsMobileSidebarOpen(true)}
+              className="text-white hover:text-brand transition-colors p-2 -mr-2"
+              aria-label="Open Sidebar"
+            >
+              <Menu size={24} />
+            </button>
+          </header>
+
           {/* Scrollable Page Content */}
           <main className="flex-1 overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-white/5 p-6 lg:p-10">
             <div className="max-w-[1200px] mx-auto">{children}</div>
